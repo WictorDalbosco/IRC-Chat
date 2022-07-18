@@ -5,7 +5,7 @@
 
 using namespace std;
 
-// Struct representing a member in a channel
+// Struct para um membro no canal
 struct Member {
 
     int socket;
@@ -21,7 +21,7 @@ struct Member {
     }
 };
 
-// Struct to use as search condition of Member in a vector<Member>
+// Struct usado como busca do membro no vetor <Member>
 struct find_name {
     string name;
     find_name(string name) : name(name) {}
@@ -33,51 +33,51 @@ struct find_name {
 class Channel {
 
 public:
-    Member admin;       // Adminin of the channel
-    std::string name;   // Name of channel (max of 200 chars)
-    int numConnections; // Num of connected members on this channel
+    Member admin;       // Administrador do canal
+    std::string name;   // Nome do canal (máximo 200 chars)
+    int numConnections; // Número de membors conectados no canal
 
-    std::vector<Member> members; // Vector of members
+    std::vector<Member> members; // Vetor de membros
 
-    // Constructor of Channel class
+    // Construtor da classe Channel (Canal)
     Channel(string name, string nickname, int admin, char host[NI_MAXHOST]);
 
-    // Method to search by an user in a channel using its socket as key
+    // Função para buscar um usuário no canal utilizando seu socket como chave
     int findMember(string nickname);
 
-    // Method to search by an user in a channel using its nickname as key and return its iterator
+    // Função para buscar um usuário no canal usando seu nickname como chave e retornando seu iterador
     vector<Member>::iterator getMembersIterator(string nickname);
 
-    // Method to add an user to a channel by adding its socket to members list
+    // Função para adicionar um usuário no canal adicionando seu socket na lista de membros
     int addUser(string nickname, int clientSocket, char host[NI_MAXHOST]);
 
-    // Method to remove an user from a channel by removing its socket from members list
+    // Função para remover um usuário no canal removendo seu socket na lista de membros
     int removeUser(string nickname);
 
-    // Method to get user ip
+    // Função para pegar o IP do usuário
     string getUserHost(string nickname);
 
-    // Method to get the first member on channel list of members
+    // Função para pegar o primeiro membro da lista do canal
     Member getFirstMember();
 
-    // Method to verify if the admin of the channel still the same since the creation of this channel
+    // Função para verify if the admin of the channel still the same since the creation of this channel
     bool verifyAdmin();
 
-    // Method to get the admin of the channel
+    // Função para pegar o admin do canal
     Member getAdmin();
 
-    // Method to set a new admin of the channel
+    // Função para mudar o admin do canal
     void changeAdmin();
 
-    // Method to increase the num of connected members of this channel before a member joined
+    // Função para aumentar o número de membros conectados depois de um novo membro entrar
     void increaseNumConnections();
 
-    // Method to mute an user given its nickname
+    // Função para mutar um usuário 
     int muteUser(string nickname);
 
-    // Method to unmute an user given its nickname
+    // Função para desmutar um usuário 
     int unmuteUser(string nickname);
 
-    // Method to check if an user is muted or not
+    // Função para checar se um usuário está mutado
     int isMuted(string nickname);
 };
