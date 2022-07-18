@@ -1,5 +1,5 @@
 /*
-    Establishing a socket to the client side of application.
+    Estabelecendo um socket no client-side da aplicação
 */
 
 #include <algorithm>
