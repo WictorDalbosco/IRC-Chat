@@ -8,19 +8,19 @@ using namespace std;
 
 int id;
 
-// All documentation of the functions below are on classChannel.h
+// Documentação das funções estão no arquivo classChannel.h
 
 Channel::Channel(string name, string nickname, int admin, char *ip) {
 
     struct Member aux;
 
-    // Assigning info of new member
+    // Atribuindo infos de um novo membro
     aux.name = nickname;
     aux.socket = admin;
     aux.isMuted = false;
     aux.host.assign(ip);
 
-    // Assigning info of the new channel
+    // Atribuindo infos de um novo canal
     this->name = name;
     this->members.push_back(aux);
     this->admin = aux;
@@ -29,9 +29,9 @@ Channel::Channel(string name, string nickname, int admin, char *ip) {
 
 int Channel::findMember(string nickname) {
 
-    // Checking if member is already in this channel
+    // Checando se membro já está no canal
     if (find_if(this->members.begin(), this->members.end(), find_name(nickname)) != this->members.end()) {
-        // cout << "\nMember already in this channel.\n";
+        // cout << "\nMembro já está no canal.\n";
         return 1;
     } else
         return 0;
@@ -45,18 +45,18 @@ int Channel::addUser(string nickname, int clientSocket, char *ip) {
 
     struct Member aux;
 
-    // Assigning new member's info
+    // Atribuindo infos de um novo membro
     aux.name = nickname;
     aux.socket = clientSocket;
     aux.isMuted = false;
     aux.host.assign(ip);
 
-    // Checking if member is already in this channel
+    // Checando se membro já está no canal
     if (find_if(this->members.begin(), this->members.end(), find_name(nickname)) != this->members.end()) {
-        cout << "\nThere's already a member with nickname " << nickname << " on channel " << this->name << ".\n";
+        cout << "\nJá tem um membro com o nome " << nickname << " no canal " << this->name << ".\n";
         return 0;
     }
-    this->members.push_back(aux); // adds new client to the end of members list of this channel
+    this->members.push_back(aux); // adiciona novo cliente ao final da lista de membros do canal
     return 1;
 }
 
@@ -66,16 +66,16 @@ int Channel::removeUser(string nickname) {
 
     it = find_if(this->members.begin(), this->members.end(), find_name(nickname));
 
-    // Checking if member is in this channel
+    // Checando se membro já está neste canal
     if (it != this->members.end()) {
-        this->members.erase(it); // deleting client from channel members vector
+        this->members.erase(it); // removendo cliente da lista de memebros do canal 
         this->numConnections--;
         if (this->numConnections != 0 && !this->verifyAdmin())
             this->changeAdmin();
         return 1;
     }
 
-    // Member is not on this channel. Returning 0 to indicate error.
+    // Membro não está no canal. Retorna 0 para indicar erro.
     return 0;
 }
 
@@ -104,16 +104,16 @@ string Channel::getUserHost(string nickname) {
 
     it = find_if(this->members.begin(), this->members.end(), find_name(nickname));
 
-    // Checking if member is in this channel
+    // Checando se membro já está neste canal
     if (it != this->members.end()) {
         return (*it).host;
     }
-    return "not found";
+    return "não encontrado";
 }
 
 int Channel::isMuted(string nickname) {
 
-    // Checking if user exists on this channel
+    // Checando se o usuário existe neste canal
     if (this->findMember(nickname)) {
         vector<Member>::iterator it;
 
@@ -131,7 +131,7 @@ int Channel::isMuted(string nickname) {
 
 int Channel::muteUser(string nickname) {
 
-    // Checking if member exists. If so, mute him/she.
+    // Checa se membro existe, e então o muta.
     if (this->findMember(nickname)) {
         vector<Member>::iterator it;
 
@@ -146,7 +146,7 @@ int Channel::muteUser(string nickname) {
 
 int Channel::unmuteUser(string nickname) {
 
-    // Checking if member exists. If so, unmute him/she.
+    // Checa se membro existe, e então o desmuta.
     if (this->findMember(nickname)) {
         vector<Member>::iterator it;
 
