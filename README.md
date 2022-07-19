@@ -18,7 +18,7 @@ $ ssh -R 60000:localhost:60000 serveo.net
 ```
 $ make s
 ```
-- On last (and others) terminal(s), use the following command to run **client side application**. Enter **server's ip** (which is **0.0.0.0** if you're in the same network where server is running **or 159.89.214.31** if you're running with the optional ssh tunneling) and **server's port**, which is **60000** by default (see [Notes](https://github.com/henriquesqs/University/tree/master/Computer%20Networks#Notes) for entering a correct port);
+- On last (and others) terminal(s), use the following command to run **client side application**. Enter **server's ip** (which is **0.0.0.0** if you're in the same network where server is running **or 159.89.214.31** if you're running with the optional ssh tunneling) and **server's port**, which is **60000** by default;
 ```
 $ make c
 ```
