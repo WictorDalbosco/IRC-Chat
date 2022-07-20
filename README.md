@@ -10,7 +10,7 @@ Projeto criado para **simular um chat IRC* adptando as [especificções RFC 1459
 
 ## Desenvolvimento
 
-O projeto foi desnvolvido utilizando **linguagem C++11** e um **compilador g++ **. Os testes foram feitos no Ubuntu 18.04.2 usando WSL no Windows.
+O projeto foi desnvolvido utilizando **linguagem C++11** e um **compilador g++**. Os testes foram feitos no Ubuntu 18.04.2 usando WSL no Windows.
 
 ## Como usar
 
