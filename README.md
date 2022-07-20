@@ -1,28 +1,27 @@
 # IRC-Chat (Internet Relay Chat)
 
-This project was created in order to **simulate an Internet Relay Chat (IRC)** adapting [RFC 1459 specifications](https://tools.ietf.org/html/rfc1459). Currently, this project **supports more than one client connected at the same time** by using multithreads.
+Projeto criado para **simular um chat IRC* adptando as [especificções RFC 1459](https://tools.ietf.org/html/rfc1459). O projeto suporta mais de um cliente conectado ao mesmo tempo usando multithread.
 
-## Development
+## Membros
 
-All the project was developed using **C++11 languague** and **g++ compiler** on Fedora 31 workstation. We also tested on Ubuntu 18.04.2. using WSL on Windows.
+- Jônatas Alves Lopes, NUSP 11796552 ([jony](https://github.com/Jony33Invent));
+- Pedro Henrique Raymundi, NUSP 11795634 ([pedro](https://github.com/PedroRaymundi)).
+- Wictor Dalbosco Silva, NUSP 11871027 ([wictor](https://github.com/WictorDalbosco)).
 
-## How to use
+## Desenvolvimento
 
-- Certify that you have **make** installed and use `$ make all` to compile the source code;
-- For a first interaction, **open three terminals**;
-- On first terminal, use the command below for **ssh tunneling with remote port forwarding** from serveo.net or other trusted source of yours, which allows connections from outside of your localhost (optional): 
-```
-$ ssh -R 60000:localhost:60000 serveo.net
-```
-- On second terminal, run **server side** application by using the command below. You won't see nothing but a message telling you on what ip address and port the server is running after using it:
+O projeto foi desnvolvido utilizando **linguagem C++11** e um **compilador g++ **. Os testes foram feitos no Ubuntu 18.04.2 usando WSL no Windows.
+
+## Como usar
+
+- Certifique-se que o **make** está instalado e utilize `$ make all` para compilar todos os códigos fonte;
+- Para simular uma interação, abra ao menos **três terminais**;
+- No primeiro, será compilado o **servidor** utilizando o comando abaixo, que informará que a conexão foi estabelecida.
 ```
 $ make s
 ```
-- On last (and others) terminal(s), use the following command to run **client side application**. Enter **server's ip** (which is **0.0.0.0** if you're in the same network where server is running **or 159.89.214.31** if you're running with the optional ssh tunneling) and **server's port**, which is **60000** by default;
+- No segundo e terceiro terminais, serão os clientes, que serão compilado com o comando abaixo, e repita em quantos terminais quiser para simular um chat. Lembrando que o IP e porta são fornecidos no primeiro terminal que foi aberto. IP e porta padrão 0.0.0.0 e 60000.
 ```
 $ make c
 ```
-- On terminal(s) running client side, wait for the welcome message and follow the instructions provided by the application.
-
-## Notes
-Perhaps you'll need to change the port where server is running. To do so, go to [this line on serverMultithread.cpp](https://github.com/henriquesqs/University/blob/ee87ab6dfadc5293c767998f89ddf106f587d18e/Computer%20Networks/chat/serverMultithread.cpp#L825) and change the int variable "port" to an available port of your Operating system (OS). Also, you'll need to change the port on ssh command line from 60000 to whatever port you're now using and also change the entered port on client side application when asked.
+- Agora só seguir as instruções dadas na aplicação.
