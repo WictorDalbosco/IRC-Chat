@@ -40,7 +40,7 @@ void newConnection(sockaddr_in server_address, sockaddr_in client, Channel *c, i
     int bytesSend = 0, bytesReceived = 0; // variável para controlar os bytes do recptor (recv) e funções de envio
     string msg, aux, auxToClientResponse;
 
-    char confirmNick[56] = "Seu nick está registrado. Se divirta!!\n\nComece a mandar mensagens:";
+    char confirmNick[69] = "Seu nick está registrado. Se divirta!!\n\nComece a mandar mensagens:";
     char welcomeMsg[46] = "Olá! Este é o chat por servidor TCP.\n";
 
     Member temp; // infos temporária do cliente que mandou msg
@@ -88,11 +88,6 @@ void newConnection(sockaddr_in server_address, sockaddr_in client, Channel *c, i
         if (bytesReceived == -1) {
             cerr << "Erro ao receber mensagem. Parando.\n";
             return;
-        }
-
-        else if (bytesReceived == 0 || strlen(buff) == 0) {
-            // std::cout << "Servidor recebendo nada ou lixo";
-            continue;
         }
 
         else if (bytesReceived > 0) {
@@ -161,7 +156,7 @@ void newConnection(sockaddr_in server_address, sockaddr_in client, Channel *c, i
 
                     for (int count = 0; count < 5; count++) {
 
-                        // Sending mensagem to user saying that he/she has been muted
+                        // Sending message to user saying that he/she has been muted
                         bytesSend = send((*it).socket, aux.c_str(), 4096, 0);
 
                         if (bytesSend < 0)
@@ -192,7 +187,7 @@ void newConnection(sockaddr_in server_address, sockaddr_in client, Channel *c, i
                         }
                     }
 
-                    // Sending error mensagem
+                    // Sending error message
                     for (int count = 0; count < 5; count++) {
 
                         // bytesSend = send((*c).members[currentClient].socket, "ERROR. This command is admin only.", 55, 0);
@@ -671,7 +666,7 @@ void newConnection(sockaddr_in server_address, sockaddr_in client, Channel *c, i
                         }
                     }
 
-                    // If the received mensagem ends with value 4, then the mensagem is bigger than 4096 bytes.
+                    // If the received message ends with value 4, then the message is bigger than 4096 bytes.
                     while (buff[4095] == 4) {
 
                         buff[4095] = 0;
@@ -714,7 +709,7 @@ void newConnection(sockaddr_in server_address, sockaddr_in client, Channel *c, i
                         }
                     }
 
-                    // Sending received mensagem for all the clients except the one who send the current mensagem
+                    // Sending received message for all the clients except the one who send the current message
                     for (int j = 0; j < (*c).members.size(); j++) {
 
                         if ((*c).members[j].socket != -1 || (*c).members[j].name.compare(temp.name) == 0) {
@@ -733,12 +728,12 @@ void newConnection(sockaddr_in server_address, sockaddr_in client, Channel *c, i
                         }
                     }
 
-                    // If the mensagem is smaller than 4096 chars, i.e, the remaining of
-                    // the big mensagem, we are storing it in buff and sending to client.
+                    // If the message is smaller than 4096 chars, i.e, the remaining of
+                    // the big message, we are storing it in buff and sending to client.
                     buff[4095] = 0;
                     msg += buff;
 
-                    std::cout << "\nMensagem de " << temp.name << ": " << msg << "\n"; // Displaying mensagem
+                    std::cout << "\nMensagem de " << temp.name << ": " << msg << "\n"; // Displaying message
                 }
 
                 // User is muted so can't send messages
@@ -760,7 +755,7 @@ void newConnection(sockaddr_in server_address, sockaddr_in client, Channel *c, i
                     for (int count = 0; count < 5; count++) {
 
                         // bytesSend = send(temp.socket, "This nickname could not be found on this channel.", 55, 0);
-                        bytesSend = send(temp.socket, "Você está...", 4096, 0);
+                        bytesSend = send(temp.socket, "Você está mutado...", 4096, 0);
 
                         if (bytesSend < 0)
                             continue;
@@ -931,7 +926,7 @@ int main(int argc, char const *argv[]) {
                 return 1;
             }
 
-            // Checks if user is trying para list available channels
+            // Command /list
             else if (strcmp(buffer, "/list") == 0) {
 
                 for (deque<Channel>::iterator ptr = channels.begin(); ptr < channels.end(); ptr++) {
@@ -939,22 +934,22 @@ int main(int argc, char const *argv[]) {
                     send(clientSocket, buffer, 4096, 0);
                 }
 
-                strcpy(buffer, "terminou"); // sending a flag mensagem indicating that the reading ended
+                strcpy(buffer, "terminou"); // sending a flag indicating that the reading ended
                 send(clientSocket, buffer, 4096, 0);
             }
 
-            // Checando if user entered correctly /join command
+            // Command /join
             else if (strlen(buffer) > 7 && (strncmp(buffer, "/join &", 7) == 0 || strncmp(buffer, "/join #", 7) == 0)) {
 
-                int k = 0; // variável iterável
+                int k = 0;
 
-                int size = channels.size(); // variável para armazenar how many clients are connected to the channel
+                int size = channels.size(); // how many channels exists
 
                 exists = false;
                 channelName = buffer;
                 channelName.erase(0, 6); // Leaving only the name of the channel in the string
 
-                // Checando if the channel already exists
+                // Check if the channel already exists
                 for (k = 0; k < size; k++) {
                     if (channels[k].name.compare(channelName.c_str()) == 0) {
                         exists = true;
