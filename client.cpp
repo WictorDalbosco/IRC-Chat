@@ -18,12 +18,24 @@
 using namespace std;
 
 bool fsigint = false; // bool to check if we caught a SIGINT
-
 struct sigaction sigIntHandler; // struct that handles with SIGINT
+
+// Method to show help menu options to clients
+void help() {
+
+    std::cout << "Comandos que você pode utilizar:\n\n"
+              << "1) /connect - te conecta a um servidor, você precisará de um endereço IP e o número da porta que o servidor está ouvindo\n"
+              << "2) /nickname seuNick - é necessário um nick para enviar mensagens num servidor\n"
+              << "3) /ping - use este comando para testar se você está conectado ao servidor, caso esteja tudo ok, você verá um 'pong' na tela retornado pelo servidor\n"
+              << "4) /quit ou apert ctrl+D no teclado - desconecta do servidor\n"
+              << "5) /help - para obter ajuda, conectado ou não a um servidor\n\n"
+              << "P.S.: Quando você estiver conectado a um servidor, para mandar mensagens e usar estes comandos, providencie seu nick e, se estiver tudo correto, você poderá enviar mensagens! Para fazer isso, digite o comando e então pressione a tecla Enter, e então digite /send e então pressione Enter novamente.\n\n"
+                 "Divirta-se!\n\n";
+    return;
+}
 
 // Method that handles /quit requestes from users
 int quit() {
-
     char c;
 
     while (true) {
@@ -51,28 +63,12 @@ int quit() {
     }
 }
 
-// Method to show help menu options to clients
-void help() {
-
-    std::cout << "Comandos que você pode utilizar:\n\n"
-              << "1) /connect - te conecta a um servidor, você precisará de um endereço IP e o número da porta que o servidor está ouvindo\n"
-              << "2) /nickname seuNick - é necessário um nick para enviar mensagens num servidor\n"
-              << "3) /ping - use este comando para testar se você está conectado ao servidor, caso esteja tudo ok, você verá um 'pong' na tela retornado pelo servidor\n"
-              << "4) /quit ou apert ctrl+D no teclado - desconecta do servidor\n"
-              << "5) /help - para obter ajuda, conectado ou não a um servidor\n\n"
-              << "P.S.: Quando você estiver conectado a um servidor, para mandar mensagens e usar estes comandos, providencie seu nick e, se estiver tudo correto, você poderá enviar mensagens! Para fazer isso, digite o comando e então pressione a tecla Enter, e então digite /send e então pressione Enter novamente.\n\n"
-                 "Divirta-se!\n\n";
-    return;
-}
-
 // Method that handles ctrl+c (SIGINT)
 void my_handler(int s) {
 
     if (s == SIGINT) {
-        std::cout << "\nFoi recebido um sinal 2 (SIGINT). Você deseja realmente sair? Se quiser digite /quit.\n";
-        fsigint = true;
-        fflush(stdin);    // clearing stdin
-        std::cin.clear(); // clearing std::cin
+        std::cout << "\nFoi recebido um sinal 2 (SIGINT). Você deseja realmente sair\n";
+        return;
 
     } else
         std::cout << "\nRecebeu sinal " << s << "\n";
@@ -235,9 +231,8 @@ void threadReceive(int socket, string nicknameClient, int *receiveReturn) {
 
 void threadSend(int socket, int *receiveReturn, string nickname) {
 
-    int send = 0; // Variable responsible for store results of send()
+    int sendResults = 0; // Variable responsible for store results of send()
     string input; // All user input messages will be stored here
-    string aux2;  // Second auxiliar string
     string user;  // String to store user that admin wants to kick
 
     char buff[4096];   // All messages from the server will be stored here
@@ -250,9 +245,8 @@ void threadSend(int socket, int *receiveReturn, string nickname) {
     while (true) {
 
         // Reset below vars at each loop
-        send = 0;
+        sendResults = 0;
         input.clear();
-        aux2.clear();
         memset(buff, 0, 4096);
         auxCompare.clear();
         serverResponse.clear();
@@ -263,7 +257,7 @@ void threadSend(int socket, int *receiveReturn, string nickname) {
 
         //the current client has been kicked form the channel
         if (*receiveReturn == 1) {
-            // std::cout << "\n\npercebeu q foi kikado - thread send\n\n";
+            // std::cout << "\n\npercebeu q foi banido - thread send\n\n";
             // ::send(socket, "User kicked", 4096, 0); // Send the message to server
             return;
         }
@@ -277,37 +271,23 @@ void threadSend(int socket, int *receiveReturn, string nickname) {
             std::cin.clear();
 
             if (*receiveReturn == 1) {
-                // std::cout << "\n\npercebeu q foi kikado - thread send\n\n";
+                // std::cout << "\n\npercebeu q foi banido - thread enviada\n";
                 ::send(socket, "Usuário banido", 4096, 0); // Send the message to server
                 return;
             }
 
-            std::getline(std::cin >> std::ws, aux2);
+            std::getline(std::cin >> std::ws, input);
 
             if (std::cin.eof() && !fsigint) {
                 ::send(socket, "/quit", 4096, 0); // Send the message to server
                 // std::cout << "Você se desconectou! Até a próxima.";
                 input += "/quit";
-                break;
-                // return;
             }
 
-            else if (aux2.compare("/send") != 0) {
-                input += aux2;
-                input += "\n";
-            }
-
-            else {
-                if (input.size() == 0) {
-                    std::cout << "Não é possível enviar mensagens vazias, escreva algo.\n";
-                    continue;
-                }
-                input.erase(input.size() - 1); // Removing the last "\n" that was added before
-                break;
-            }
+            break;
         }
 
-        std::cout << "\n< You: " << input << "\n\n";
+        std::cout << "\n< Você: " << input << "\n\n";
 
         // User is trying to get help
         if (input.compare("/help") == 0) {
@@ -382,56 +362,25 @@ void threadSend(int socket, int *receiveReturn, string nickname) {
         }
 
         // Checking if it's a big message (more than 4096 bytes)
-        if (input.size() > 4096)
-            bigMessage = true;
+        int numero_mensagens = input.size()/4095;
+        if (!(input.size()%4095))
+            numero_mensagens-1;
+        
+        string buffer_temporario;
+        
+        for (int i = 0; i <= numero_mensagens; i++) {
+            buffer_temporario.clear();
+            memset(buff, 0, 4096); // Limpa buffer para enviar dados ao servidor
 
-        auxCompare = input; // Storing input to check if the sent message was correctly received
+            buffer_temporario = input.substr((i*4095),((i+1)*4095));
+            strncpy(buff, buffer_temporario.c_str(), 4096); // Copia input para o buffer
 
-        while (input.size() > 4096) {
+            sendResults = ::send(socket, buff, 4096, 0);
 
-            memset(buff, 0, 4096); // Cleaning the buffer
-            bytesReceived = 0;
-
-            strncpy(buff, input.c_str(), 4095); // Copying 'input' to buff
-
-            buff[4095] = 4; // Adding a '4' just to identify that the message isn't finish yet
-
-            send = ::send(socket, buff, 4096, 0); // Send the message to server
-
-            if (send == -1) {
-                std::cout << "Não foi possível enviar ao servidor. Tente novamente.";
-                continue;
+            if (bytesReceived == -1) {
+                cerr << "Falha na conexao!";
+                break;
             }
-
-            if (buff[4095] == 4)
-                buff[4095] = 0;
-
-            serverResponse += buff;
-
-            if (bytesReceived == -1)
-                std::cout << "Erro ao receber resposta do servidor\n\n";
-
-            input.erase(0, 4095); // Erases first 4096 bytes of auxBuffer
-        }
-
-        memset(buff, 0, 4096); // Cleaning buffer to send data to server
-
-        strncpy(buff, input.c_str(), input.size()); // Copying input to buff
-
-        send = ::send(socket, buff, 4096, 0); // Sending bytes from auxBuffer that are in buffer already
-
-        if (send == -1) {
-
-            if (bigMessage == true)
-                continue; // If messages if bigger than 4096 chars, we've showed the message already
-
-            cerr << "Mensagem não enviada! Tente novamente!\n";
-            continue;
-        }
-
-        if (bytesReceived == -1) {
-            cerr << "Erro na conexão!";
-            break;
         }
 
         // User wants to quit the application
@@ -534,7 +483,6 @@ int connectToServer() {
 
         // Checks if user is trying to quit the application
         else if ((input.compare("/quit")) == 0) {
-            std::cout << "Você está conectado. Quer sair da aplicação? Digite 's' se sim, ou 'n' caso queira ficar.\n";
             if (quit() == 0) {
                 ::send(socket, "Usuário saiu da aplicação", 50, 0); // Sending error
                 close(socket);
@@ -569,7 +517,7 @@ int connectToServer() {
                       << "2) /list para mostrar os canais rodando neste servidor\n"
                       << "4) /quit ou apert ctrl+D no teclado - desconecta do servidor\n"
                       << "5) /help - para obter ajuda, conectado ou não a um servidor\n\n"
-                         "Divirta-se!\n\n";
+                         "Divirta-se! \n\n";
 
             input.clear();
             std::cin.clear();
@@ -687,7 +635,7 @@ int connectToServer() {
 
             // Checks if user is trying to quit the application
             else if ((input.compare("/quit")) == 0) {
-                std::cout << "Voçê está conectado. Deseja sair da aplicação? Digite 's' se sim ou 'n' caso deseje ficar.\n";
+                std::cout << "Você está conectado. Deseja sair da aplicação? Digite 's' se sim ou 'n' caso deseje ficar.\n";
 
                 if (quit() == 0) {
                     close(socket);
@@ -774,7 +722,7 @@ int main(int argc, char const *argv[]) {
 
         // Checking if client is trying to quit the chat
         else if (input.compare("/quit") == 0) {
-            std::cout << "Voçê não está conectado. Deseja sair da aplicação? Digite 's' se sim ou 'n' caso deseje ficar\n";
+            std::cout << "Você não está conectado. Deseja sair da aplicação? Digite 's' se sim ou 'n' caso deseje ficar\n";
 
             if (quit() == 0)
                 return 0;
