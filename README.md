@@ -25,3 +25,5 @@ $ make s
 $ make c
 ```
 - Agora só seguir as instruções dadas na aplicação.
+
+Um vídeo de demonstração pode sen encontrado neste [link](https://drive.google.com/file/d/1qGheYsW0si0KAt_xWnuBftutnJTb9YLF/view?usp=sharing)
